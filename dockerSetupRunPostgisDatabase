@@ -1,0 +1,10 @@
+#!bin/bash
+
+# Will pull the image
+docker pull mdillon/postgis:LATEST
+
+# Will run the docker image
+docker run --name postgis -e POSTGRES_PASSWORD="mySecretPassword" -d -p 5444:5432 mdillon/postgis:latest
+
+# To psql into the database
+docker run -it --link postgis:postgres --rm postgres \ sh -c 'exec psql -h "$POSTGRES_PORT_5432_TCP_ADDR" -p "$POSTGRES_PORT_5432_TCP_PORT" -U postgres'
