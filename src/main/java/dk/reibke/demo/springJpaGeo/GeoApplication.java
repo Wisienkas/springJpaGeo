@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.Arrays;
 import java.util.List;
 
@@ -76,12 +78,14 @@ public class GeoApplication {
             method = RequestMethod.GET,
             produces = "application/json",
             params = {"lat", "lon"})
-    public Object getNearest(@RequestParam double lat, @RequestParam double lon) {
-        return entityManager.createNamedQuery("NamedLocation.findNearest")
-                .setParameter("lat", lat)
+    public NamedLocation getNearest(@RequestParam double lat, @RequestParam double lon) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT id, name, point\n" +
+                "FROM named_location\n" +
+                "ORDER BY ST_Distance(point, ST_MakePoint(:lat, :lon)) ASC LIMIT 1",
+                NamedLocation.class);
+        return (NamedLocation) query.setParameter("lat", lat)
                 .setParameter("lon", lon)
-                .setFirstResult(0)
-                .getResultList().get(0);
-                
+                .getSingleResult();
     }
 }

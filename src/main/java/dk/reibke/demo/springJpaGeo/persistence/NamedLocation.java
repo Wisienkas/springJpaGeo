@@ -5,6 +5,8 @@ import org.hibernate.annotations.*;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -13,11 +15,11 @@ import javax.persistence.Table;
  * Created by Nikolaj Schaldemose Reibke on 4/30/17.
  */
 @Entity
-@NamedQueries({
-        @NamedQuery(name = "NamedLocation.findNearest",
+@NamedNativeQueries({
+        @NamedNativeQuery(name = "NamedLocation.findNearest",
                 query = "SELECT id, name, point\n" +
                         "FROM NamedLocation\n" +
-                        "ORDER BY ST_Distance(point, ST_MakePoint(:lat, :lon)) ASC")
+                        "ORDER BY ST_Distance(point, ST_MakePoint(:lat, :lon)) ASC LIMIT 1")
 })
 public class NamedLocation {
     
